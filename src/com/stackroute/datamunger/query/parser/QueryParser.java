@@ -176,7 +176,6 @@ public class QueryParser {
 			String[] _conditions = conditions.split(" and ");
 
 			for (String _condition : _conditions) {
-				System.out.println(_condition);
 				if (_condition.contains(" or ")) {
 					String[] subConditions = _condition.split(" or ");
 					for (String subCondition : subConditions) {
@@ -234,14 +233,16 @@ public class QueryParser {
 
 		String base = extractBaseQuery(queryString);
 
-		String[] _functions = base.split(" from ")[0].split("select ")[1].split(",");
+		if (base.contains("\\(") && base.contains("\\)")) {
+			String[] _functions = base.split(" from ")[0].split("select ")[1].split(",");
 
-		for (String _function : _functions) {
-			String[] split = _function.split("\\(");
-			String field = split[1].split("\\)")[0];
-			String func = split[0];
+			for (String _function : _functions) {
+				String[] split = _function.split("\\(");
+				String field = split[1].split("\\)")[0];
+				String func = split[0];
 
-			functions.add(new AggregateFunction(field, func));
+				functions.add(new AggregateFunction(field, func));
+			}
 		}
 
 		return functions;
